@@ -13,7 +13,10 @@ from PIL import Image
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PNG = os.path.join(HERE, "assets", "png")
-OUT = os.path.join(HERE, "Presentasi_Kalibrasi_Otomatis_Sensor_Tekanan.pptx")
+# PPTX_OUT boleh diisi lewat environment variable supaya bisa membuat file
+# sementara (misal untuk render preview) tanpa menimpa deck utama.
+OUT = os.environ.get("PPTX_OUT") or os.path.join(
+    HERE, "Presentasi_Kalibrasi_Otomatis_Sensor_Tekanan.pptx")
 
 NAVY = RGBColor(0x0F, 0x2A, 0x44)
 NAVY2 = RGBColor(0x1B, 0x3F, 0x63)
@@ -220,7 +223,7 @@ base(s, "01  ·  Pendahuluan", "Kenapa kalibrasi tekanan masih manual?",
 
 # tiga kartu masalah
 cards = [
-    ("Lambat & mahal", "Satu sensor 0–10 bar butuh ±45 menit\njika dilakukan manual titik per titik.", "45 mnt"),
+    ("Lambat & mahal", "Satu sensor 0–10 bar butuh ±45 menit\nbila dikerjakan manual.", "45 mnt"),
     ("Tidak konsisten", "Pembacaan bergantung pada jam tangan\noperator dan kecepatan membuka katup.", "± 0,3 % FS"),
     ("Jejak audit lemah", "Data ditulis tangan, rawan salah catat,\ndan sulit direkonstruksi saat audit.", "manual"),
 ]
@@ -317,13 +320,13 @@ footer(s, 5)
 s = prs.slides.add_slide(BLANK)
 base(s, "05  ·  Akuisisi Sinyal", "Rantai sinyal: resolusi bukan bottleneck",
      "ADC 24-bit memberi resolusi 0,6 µbar, jauh di bawah resolusi DUT — akurasi ditentukan referensi.")
-picture(s, "03_rantai_sinyal.png", 1.76, max_w=12.05, max_h=4.10)
+picture(s, "03_rantai_sinyal.png", 1.72, max_w=12.05, max_h=3.78)
 # tiga angka kunci
 for i, (v, l, c) in enumerate([
         ("1,2 µV rms", "derau input pengkondisi sinyal", TEAL),
         ("≈ 0,3 mbar", "ekuivalen derau pada skala tekanan", TEAL),
         ("0,02 % FS", "akurasi transduser referensi (2 mbar)", AMBER)]):
-    metric(s, 0.62 + i * 4.12, 5.60, 3.86, 1.16, v, l, c)
+    metric(s, 0.62 + i * 4.12, 5.66, 3.86, 1.16, v, l, c)
 
 footer(s, 6)
 
@@ -359,7 +362,7 @@ footer(s, 9)
 
 # ================================================================== 10. HISTERESIS
 s = prs.slides.add_slide(BLANK)
-base(s, "09  ·  Hasil", "Histeresis & repeatability: sumber ketidakpastian terkecil",
+base(s, "09  ·  Hasil", "Histeresis & repeatability: dua sumber galat berbeda",
      "Kedua parameter diukur dari tiga siklus penuh naik–turun pada 11 titik tekanan.")
 picture(s, "05_histeresis_repeatability.png", 1.76, max_w=12.20, max_h=4.05)
 for i, (v, l, c) in enumerate([
@@ -392,7 +395,7 @@ bullets(s, 0.62, 2.22, 6.20, [
 ], size=12.2, gap=0.40, sub_size=9.8)
 
 tb(s, 7.05, 1.86, 5.7, 0.28, "RENCANA 8 MINGGU", 9.8, AMBER, True, FONT_B)
-picture(s, "09_gantt.png", 2.16, max_w=5.75, max_h=2.55, left=7.02)
+picture(s, "09_roadmap.png", 2.16, max_w=5.72, max_h=2.62, left=7.02)
 
 rect(s, 7.05, 4.86, 5.68, 1.55, fill=NAVY, line=None)
 tb(s, 7.32, 5.04, 5.1, 0.28, "RISIKO UTAMA & MITIGASI", 9.5, AMBER, True, FONT_B)

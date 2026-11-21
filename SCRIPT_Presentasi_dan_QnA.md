@@ -136,7 +136,7 @@ Saya sudah menyamakan angka yang tadinya tidak konsisten. Kalau kamu **menyusun 
 2. **TUR: sekarang 6,1 : 1** (tadinya 5,6 : 1, tidak cocok dengan U = 8,2 mbar). Hitungannya 0,5 % FS ÷ 0,082 % FS = 6,1. Angka 5,6 hanya benar kalau U = 8,9 mbar. Saya pilih memperbaiki TUR karena U sudah dipakai di tiga slide lain. Sudah diubah di `assets/figures.py` (caption kini dihitung otomatis), `build_pptx.py` (slide 3 dan 11), dan di script.
 3. **Nama masih placeholder.** Ganti `[Nama 1] · [Nama 2] · [Nama 3]` di slide 1 dan slide 12, juga di script (jangan sampai terbaca "nama satu").
 4. **Filter RC sekarang jelas.** Diagram blok tadinya menulis *"filter RC 2 Hz"* sementara skematik menulis *"1,6 kHz"*. Sudah jadi **"RC 1,6 kHz + LPF 2 Hz"** — 1,6 kHz anti-aliasing analog, 2 Hz tapis digital di firmware.
-5. **Gambar di `assets/png/` sudah versi terbaru** (diagram blok & grafik ketidakpastian diregenerasi). File `.pptx` lama masih memuat versi sebelum perbaikan, jadi kalau kamu memakai pptx itu, ganti dua gambar tersebut — atau sisipkan ulang PNG dari `assets/png/`.
+5. **Gambar di `assets/png/` sudah versi terbaru** dan `Presentasi_Kalibrasi_Otomatis_Sensor_Tekanan.pptx` sudah dibangun ulang dari aset itu (folder `assets/preview/` juga sudah diperbarui, 12 slide). Kalau kamu menambah/ mengganti teks di PowerPoint, cukup edit pptx-nya langsung; jangan jalankan `build_pptx.py` lagi karena itu akan menimpa dengan versi skrip (nama masih placeholder).
 6. **Cek durasi baca.** Naskah ±1.390 kata. Kalau latihan lewat 10:00, potong yang paling aman: satu kalimat di slide 2 dan satu kalimat di slide 10 (alur tidak berubah).
 
 ---
@@ -170,7 +170,7 @@ Semua gambar ada di `assets/png/`, rasio 16:9 sudah pas untuk slide. Kalau butuh
 | 9 | Kurva kalibrasi + galat sebelum/ sesudah | `04_kurva_kalibrasi.png` |
 | 10 | Histeresis & repeatability | `05_histeresis_repeatability.png` |
 | 11 | Anggaran ketidakpastian (bar + donat) | `06_ketidakpastian.png` |
-| 12 | Kesimpulan + jadwal 8 minggu | `09_gantt.png` |
+| 12 | Kesimpulan + rencana 8 minggu | `09_roadmap.png` (versi ringkas, dipakai di slide) · `09_gantt.png` (detail per task, cadangan kalau ditanya) |
 
 **Angka yang harus sama di semua slide** (kalau kamu mengetik ulang, jangan diubah):
 

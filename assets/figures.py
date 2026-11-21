@@ -444,7 +444,7 @@ def fig_hyst():
 
     ax = axs[1]
     colors = [NAVY, TEAL, AMBER]
-    data = np.array([cyc(+1, rng.normal(0, 0.0006), 0.0005) for _ in range(3)])
+    data = np.array([cyc(+1, rng.normal(0, 0.0007), 0.0007) for _ in range(3)])
     for k in range(3):
         ax.plot(P, (data[k] - base) / FS * 100, "o-", color=colors[k], lw=1.5, ms=4.2,
                 label=f"siklus {k+1}")
@@ -669,40 +669,99 @@ def fig_step():
 
 # ================================================================ 9. GANTT
 def fig_gantt():
+    # dibuat ringkas (6 in) karena di slide hanya memakai lebar ~5,7 in
     tasks = [
-        ("Studi literatur & standar (ISO 17025, ISA-51.1)", 0, 2, TEAL, 100),
-        ("Desain mekanik & rangkaian pneumatik", 1, 3, TEAL, 100),
-        ("Desain elektronik & PCB akuisisi", 2, 3, TEAL, 100),
-        ("Firmware ESP32 + GUI Python", 3, 4, AMBER, 70),
+        ("Studi literatur & standar", 0, 2, TEAL, 100),
+        ("Desain mekanik & pneumatik", 1, 3, TEAL, 100),
+        ("Desain elektronik & PCB", 2, 2, TEAL, 100),
+        ("Firmware + GUI Python", 3, 3, AMBER, 70),
         ("Fabrikasi & perakitan", 4, 2, AMBER, 55),
-        ("Uji kebocoran & karakterisasi", 5, 2, AMBER, 35),
-        ("Kalibrasi & analisis ketidakpastian", 6, 2, LGRAY, 10),
-        ("Laporan & publikasi", 7, 2, LGRAY, 0),
+        ("Uji kebocoran", 4, 2, AMBER, 30),
+        ("Kalibrasi & analisis U", 6, 2, LGRAY, 0),
+        ("Laporan & publikasi", 7, 1, LGRAY, 0),
     ]
-    fig, ax = plt.subplots(figsize=(12.8, 3.55))
+    fig, ax = plt.subplots(figsize=(6.1, 2.75))
     for i, (name, start, dur, col, prog) in enumerate(tasks):
         y = len(tasks) - 1 - i
-        ax.barh(y, dur, left=start, height=0.58, color=col, alpha=0.26,
+        ax.barh(y, dur, left=start, height=0.62, color=col, alpha=0.26,
                 edgecolor="none", zorder=2)
-        ax.barh(y, dur * prog / 100, left=start, height=0.58, color=col,
+        ax.barh(y, dur * prog / 100, left=start, height=0.62, color=col,
                 edgecolor="none", zorder=3)
-        ax.text(start + dur + 0.13, y, f"{prog}%", va="center", fontsize=8.6, color=GRAY)
+        ax.text(start + dur + 0.10, y, f"{prog}%", va="center", fontsize=6.8, color=GRAY)
     ax.set_yticks(range(len(tasks)))
-    ax.set_yticklabels([t[0] for t in tasks][::-1], fontsize=9.2)
-    ax.set_xticks(range(0, 9))
-    ax.set_xticklabels([f"M{i+1}" for i in range(9)], fontsize=9.0)
-    ax.set_xlim(0, 9.8)
-    ax.set_xlabel("Minggu pelaksanaan", fontsize=9.6)
-    ax.axvline(5.0, color=RED, lw=1.7, ls="--", zorder=5)
-    ax.text(5.10, len(tasks) - 0.28, "posisi sekarang\n(minggu ke-5)", fontsize=8.6,
-            color=RED, va="top")
-    ax.set_title("Jadwal pelaksanaan Tugas Akhir (8 minggu)", fontsize=11.5)
-    ax.grid(True, axis="x", color="#E8EDF2", lw=0.9, zorder=0)
+    ax.set_yticklabels([t[0] for t in tasks][::-1], fontsize=7.0)
+    ax.set_xticks([i + 0.5 for i in range(8)])
+    ax.set_xticklabels([f"M{i+1}" for i in range(8)], fontsize=6.6)
+    ax.set_xlim(0, 9.15)
+    ax.set_xlabel("Minggu pelaksanaan", fontsize=7.2, labelpad=2)
+    ax.axvline(4.5, color=RED, lw=1.3, ls="--", zorder=5)
+    ax.text(4.65, len(tasks) - 0.55, "sekarang\n(M5)", fontsize=6.6,
+            color=RED, va="top", linespacing=1.25)
+    ax.set_title("Jadwal pelaksanaan Tugas Akhir (8 minggu)", fontsize=8.6, pad=5)
+    ax.grid(True, axis="x", color="#E8EDF2", lw=0.7, zorder=0)
     ax.set_axisbelow(True)
     for sp in ("top", "right", "left"):
         ax.spines[sp].set_visible(False)
-    ax.tick_params(axis="y", length=0)
+    ax.tick_params(axis="y", length=0, pad=1)
+    ax.tick_params(axis="x", length=2, pad=1)
     save(fig, "09_gantt.png")
+
+
+# ================================================================ 10. ROADMAP (versi ringkas untuk slide)
+def fig_roadmap():
+    """Timeline 8 minggu yang tetap terbaca saat ditempel kecil di slide."""
+    fig, ax = plt.subplots(figsize=(6.7, 2.55))
+    ax.set_xlim(-0.15, 8.15)
+    ax.set_ylim(0.05, 3.35)
+    ax.axis("off")
+
+    now = 5.0  # minggu ke-5 (posisi sekarang)
+
+    # --- blok fase
+    phases = [
+        (0, 5, "Desain &\nfabrikasi", TEAL, 1.0, "white", "selesai 80 %"),
+        (5, 7, "Uji &\nkalibrasi", AMBER, 0.20, NAVY, "rencana"),
+        (7, 8, "Laporan", GRAY, 0.14, NAVY, ""),
+    ]
+    for x0, x1, label, col, alpha, tc, sub in phases:
+        ax.add_patch(FancyBboxPatch((x0 + 0.04, 2.10), x1 - x0 - 0.08, 0.86,
+                                    boxstyle="round,pad=0.02,rounding_size=0.10",
+                                    fc=col, ec=col, lw=1.2, alpha=alpha, zorder=3))
+        cx = (x0 + x1) / 2
+        ax.text(cx, 2.73, label, ha="center", va="center", fontsize=7.8,
+                fontweight="bold", color=tc, zorder=4, linespacing=1.3)
+        if sub:
+            ax.text(cx, 2.31, sub, ha="center", va="center", fontsize=6.9,
+                    color=tc, zorder=4, alpha=0.85)
+
+    # --- garis waktu
+    ax.plot([0, 8], [1.55, 1.55], color="#B9C4CF", lw=1.5, zorder=2,
+            solid_capstyle="round")
+    ms = [(5.0, "desain\nselesai", True), (6.0, "prototipe\nrakit", False),
+          (7.0, "data\nkalibrasi", False), (8.0, "laporan\n+ video", False)]
+    for x, lab, done in ms:
+        ax.plot([x, x], [1.55, 2.03], color=TEAL if done else "#B9C4CF",
+                lw=1.3, ls="-" if done else (0, (3, 3)), zorder=2)
+        ax.scatter([x], [1.55], s=42, color=TEAL if done else "white",
+                   edgecolor=TEAL if done else "#B9C4CF", lw=1.5, zorder=5)
+        if done:
+            # label milestone pertama digeser ke kiri agar tidak menabrak garis "sekarang"
+            ax.text(x - 0.14, 1.38, lab, ha="right", va="top", fontsize=6.9,
+                    color=NAVY, linespacing=1.35)
+        else:
+            ax.text(x, 1.38, lab, ha="center", va="top", fontsize=6.9,
+                    color=GRAY, linespacing=1.35)
+
+    # --- penanda "sekarang"
+    ax.plot([now, now], [0.55, 3.02], color=RED, lw=1.3, ls="--", zorder=6)
+    ax.text(now + 0.14, 3.18, "sekarang · minggu 5", ha="left", va="center",
+            fontsize=7.2, color=RED, fontweight="bold")
+
+    # --- sumbu minggu
+    for w in range(1, 9):
+        ax.text(w - 0.5, 0.62, f"M{w}", ha="center", va="center",
+                fontsize=6.4, color=GRAY)
+    save(fig, "09_roadmap.png")
 
 
 if __name__ == "__main__":
@@ -715,4 +774,5 @@ if __name__ == "__main__":
     fig_flow()
     fig_step()
     fig_gantt()
+    fig_roadmap()
     print("SELESAI")
